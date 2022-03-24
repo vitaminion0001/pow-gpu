@@ -106,7 +106,7 @@ enum HexJsonError {
 }
 
 impl RpcService {
-    fn generate_work(&self, root: [u8; 32], threshold: [u8; 32]) -> Box<Future<Item = [u8; 8], Error = WorkError>> {
+    fn generate_work(&self, root: [u8; 32], threshold: [u8; 32]) -> Box<dyn Future<Item = [u8; 8], Error = WorkError>> {
         let mut state = self.work_state.0.lock();
         let (callback_send, callback_recv) = oneshot::channel();
         state.future_work.push_back((root, threshold, callback_send));
@@ -243,7 +243,7 @@ impl RpcService {
     fn process_req(
         self,
         req: Result<Value, serde_json::Error>,
-    ) -> Box<Future<Item = (StatusCode, Value), Error = hyper::Error>> {
+    ) -> Box<dyn Future<Item = (StatusCode, Value), Error = hyper::Error>> {
         let json = match req {
             Ok(json) => json,
             Err(_) => {
@@ -265,9 +265,8 @@ impl RpcService {
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
-                        println!("PoW_generation completed in {}ms diff {:#x}",
-                            start.to(end).num_milliseconds(),
-                            threshold);
+                        println!("PoW_generation completed in {}ms",
+                            start.to(end).num_milliseconds());
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
                             StatusCode::Ok,
@@ -313,7 +312,7 @@ impl Service for RpcService {
     type Request = Request;
     type Response = Response;
     type Error = hyper::Error;
-    type Future = Box<Future<Item = Self::Response, Error = Self::Error>>;
+    type Future = Box<dyn Future<Item = Self::Response, Error = Self::Error>>;
 
     fn call(&self, req: Request) -> Self::Future {
         let res_fut = if *req.method() == hyper::Method::Post {
