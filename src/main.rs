@@ -265,8 +265,9 @@ impl RpcService {
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
-                        println!("work_generate completed in {}ms for threshold",
-                            start.to(end).num_milliseconds());
+                        println!("PoW_generation completed in {}ms diff {:#x}",
+                            start.to(end).num_milliseconds(),
+                            threshold);
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
                             StatusCode::Ok,
@@ -284,13 +285,13 @@ impl RpcService {
                     Err(WorkError::Errored) => Ok((
                         StatusCode::Ok,
                         json!({
-                            "error": "Work generation failed (see logs for details)",
+                            "error": "PoW Generation failed (see logs for details)",
                         }),
                     )),
                 }))
             }
             RpcCommand::WorkCancel(root) => {
-                println!("Received work_cancel");
+                println!("Received PoW_cancel");
                 self.cancel_work(root);
                 Box::new(Box::new(future::ok((StatusCode::Ok, json!({})))))
             }
@@ -345,10 +346,10 @@ impl Service for RpcService {
 fn main() {
     //simple_logger::init().unwrap();
 
-    let args = clap::App::new("Nano/Banano Distributed Proof of Work server")
-        .version("1.0")
-        .author("Lee Bousfield <ljbousfield@gmail.com>\nRyan LeFevre <meltingice8917@gmail.com>\nGuilherme Lawless <guilherme.lawless@gmail.com>")
-        .about("Provides a work server for (Ba)Nano without a full node.")
+    let args = clap::App::new("Vite Distributed Proof of Work server")
+        .version("1.1")
+        .author("Lee Bousfield <ljbousfield@gmail.com>\nRyan LeFevre <meltingice8917@gmail.com>\nGuilherme Lawless <guilherme.lawless@gmail.com>\nVitaminion0001")
+        .about("Provides a Pow Server for the vite chain")
         .arg(
             clap::Arg::with_name("listen_address")
                 .short("l")
