@@ -3,7 +3,7 @@ use ocl::ProQue;
 use ocl::Result;
 use ocl::Buffer;
 use ocl::Platform;
-//use ocl::prm::Ulong;
+use ocl::prm::Ulong;
 use ocl::flags::MemFlags;
 use ocl::builders::ProgramBuilder;
 use ocl::builders::DeviceSpecifier;
