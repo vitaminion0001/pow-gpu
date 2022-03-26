@@ -270,13 +270,11 @@ impl RpcService {
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
-                        let result_threshold = work_value(root, work);
                         let now: DateTime<Utc> = Utc::now();
                         let _ = println!(
-                            "{} PoW_generation completed in {}ms difficulty {}",
+                            "{} PoW_generation completed in {}ms difficulty",
                             now.format("%T"),
                             start.to(end).num_milliseconds());
-                            threshold
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
                             StatusCode::Ok,
