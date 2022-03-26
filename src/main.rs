@@ -266,15 +266,16 @@ impl RpcService {
         match command {
             RpcCommand::WorkGenerate(root, threshold) => {
                 let now: DateTime<Utc> = Utc::now();
-                let _ = println!("{} Received work for {}", now.format("%T"), hex::encode_upper(&root));
+                let _ = println!("{} Received PoW_work for {}", now.format("%d-%m-%Y %T"), hex::encode_upper(&root));
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
                         let now: DateTime<Utc> = Utc::now();
                         let _ = println!(
-                            "{} PoW_generation completed in {}ms difficulty",
-                            now.format("%T"),
-                            start.to(end).num_milliseconds());
+                            "{} PoW_generation completed in {}ms PoW {}",
+                            now.format("%d-%m-%Y %T"),
+                            start.to(end).num_milliseconds(),
+                            hex::encode_upper(&root));
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
                             StatusCode::Ok,
