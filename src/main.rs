@@ -11,6 +11,7 @@ extern crate rand;
 extern crate time;
 #[macro_use]
 extern crate serde_json;
+extern crate chrono;
 
 mod gpu;
 
@@ -41,6 +42,8 @@ use byteorder::{ByteOrder, LittleEndian};
 use parking_lot::{Condvar, Mutex};
 
 use time::PreciseTime;
+
+use chrono::{DateTime, Utc};
 
 use gpu::Gpu;
 
@@ -262,10 +265,14 @@ impl RpcService {
         let start = PreciseTime::now();
         match command {
             RpcCommand::WorkGenerate(root, threshold) => {
+                let now: DateTime<Utc> = Utc::now();
+                let _ = println!("{} Received work for {}", now.format("%T"), hex::encode_upper(&root));
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
-                        println!("PoW_generation completed in {}ms",
+                        let now: DateTime<Utc> = Utc::now();
+                        let _ = println!(
+                            "{} PoW_generation completed in {}ms",
                             start.to(end).num_milliseconds());
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
