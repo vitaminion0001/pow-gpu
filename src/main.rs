@@ -273,6 +273,8 @@ impl RpcService {
                         let now: DateTime<Utc> = Utc::now();
                         let _ = println!(
                             "{} PoW_generation completed in {}ms",
+                            now.format("%T"),
+                            hex::encode_upper(&root),
                             start.to(end).num_milliseconds());
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
