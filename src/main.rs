@@ -97,7 +97,7 @@ struct RpcService {
 enum RpcCommand {
     WorkGenerate([u8; 32],  [u8; 32]),
     WorkCancel([u8; 32]),
-    WorkValidate([u8; 32], [u8; 8], u64),
+  //  WorkValidate([u8; 32], [u8; 8], u64),
 }
 
 enum HexJsonError {
