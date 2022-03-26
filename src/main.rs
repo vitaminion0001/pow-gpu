@@ -226,10 +226,10 @@ impl RpcService {
             Some(action) if action == "work_cancel" => {
                 Ok(RpcCommand::WorkCancel(Self::parse_hash_json(&json)?))
             }
-            Some(action) if action == "work_validate" => Ok(RpcCommand::WorkValidate(
-                Self::parse_hash_json(&json)?,
-                Self::parse_work_json(&json)?,
-                Self::parse_threshold_json(&json)?,
+           // Some(action) if action == "work_validate" => Ok(RpcCommand::WorkValidate(
+           //     Self::parse_hash_json(&json)?,
+           //     Self::parse_work_json(&json)?,
+           //     Self::parse_threshold_json(&json)?,
             )),
             Some(_) => {
                 return Err(json!({
@@ -265,9 +265,8 @@ impl RpcService {
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
-                        println!("PoW_generation completed in {}ms difficulty {:#x}",
-                            start.to(end).num_milliseconds(),
-                            threshold);
+                        println!("PoW_generation completed in {}ms",
+                            start.to(end).num_milliseconds());
                         let work: Vec<u8> = work.iter().rev().cloned().collect();
                         Ok((
                             StatusCode::Ok,
@@ -295,16 +294,16 @@ impl RpcService {
                 self.cancel_work(root);
                 Box::new(Box::new(future::ok((StatusCode::Ok, json!({})))))
             }
-             RpcCommand::WorkValidate(root, work, threshold) => {
-                 println!("Received work_validate");
-                 let valid = work_valid(root, work, threshold);
-                 Box::new(future::ok((
-                     StatusCode::Ok,
-                     json!({
-                         "valid": if valid { "1" } else { "0" },
-                     }),
-                 )))
-             }
+            // RpcCommand::WorkValidate(root, work, threshold) => {
+            //     println!("Received work_validate");
+            //     let valid = work_valid(root, work, threshold);
+            //     Box::new(future::ok((
+            //         StatusCode::Ok,
+            //         json!({
+            //             "valid": if valid { "1" } else { "0" },
+            //         }),
+            //     )))
+            // }
         }
     }
 }
