@@ -266,13 +266,13 @@ impl RpcService {
         match command {
             RpcCommand::WorkGenerate(root, threshold) => {
                 let now: DateTime<Utc> = Utc::now();
-                let _ = println!("{} Received PoW_work for {}", now.format("%d-%m-%Y %T"), hex::encode_upper(&root));
+                let _ = println!("{} Received PoW_Work for {}", now.format("%d-%m-%Y %T"), hex::encode_upper(&root));
                 Box::new(self.generate_work(root, threshold).then(move |res| match res {
                     Ok(work) => {
                         let end = PreciseTime::now();
                         let now: DateTime<Utc> = Utc::now();
                         let _ = println!(
-                            "{} PoW_generation completed in {}ms PoW {}",
+                            "{} PoW_Work completed in {}ms PoW {}",
                             now.format("%d-%m-%Y %T"),
                             start.to(end).num_milliseconds(),
                             hex::encode_upper(&root));
@@ -299,7 +299,8 @@ impl RpcService {
                 }))
             }
             RpcCommand::WorkCancel(root) => {
-                println!("Received PoW_cancel");
+                let now: DateTime<Utc> = Utc::now();
+                let _ = println!("{} Received PoW_Work cancel for {}", now.format("%d-%m-%Y %T"), hex::encode_upper(&root));
                 self.cancel_work(root);
                 Box::new(Box::new(future::ok((StatusCode::Ok, json!({})))))
             }
