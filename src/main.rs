@@ -230,7 +230,7 @@ impl RpcService {
            //     Self::parse_hash_json(&json)?,
            //     Self::parse_work_json(&json)?,
            //     Self::parse_threshold_json(&json)?,
-            )),
+           // )),
             Some(_) => {
                 return Err(json!({
                     "error": "Unknown command",
