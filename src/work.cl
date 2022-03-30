@@ -107,13 +107,20 @@ static bool quick32bytesGreater (uchar *left, __global  uchar * right)  {
 #undef G2v_split
 #undef ROUND
 
-__kernel void vitechain_work(__constant uchar *attempt,
-                        __global uchar *result_a,
-                        __constant uchar *item_a,
-                        const ulong threshold)
+__kernel void vitechain_work (__global ulong * attempt, __global ulong * result_a, __global uchar * item_a, __global uchar * threshold)
 {
-    const ulong attempt_l = *((__constant ulong *) attempt) + get_global_id(0);
+	int const thread = get_global_id (0);
+  int i = 0;
+	uchar item_l [32];
+   for (i = 0; i < 32; i++) {
+    item_l[i] = 0;
+  }
+const ulong attempt_l = *((__constant ulong *) attempt) + get_global_id(0);
     if (blake2b(attempt_l, item_a) >= threshold)
         *((__global ulong *) result_a) = attempt_l;
-        
+
+  if (quick32bytesGreater(result_a, threshold))
+  {
+    	*result_a = attempt_l;
+  }
 }
